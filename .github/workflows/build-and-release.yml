@@ -1,0 +1,45 @@
+name: Create GitHub Release from Zip
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find the latest tag
+        id: tag
+        run: |
+          tag_name=$(git describe --tags --abbrev=0)
+          echo "tag=$tag_name" >> $GITHUB_OUTPUT
+
+      - name: Build the Spoon Zip
+        run: |
+          mkdir -p dist
+          zip -r dist/*.spoon.zip . -x ".git*" ".github*" "dist/*"
+        shell: bash
+
+      - name: Upload Spoon Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: spoon-zip
+          path: dist/*.spoon.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: ${{ steps.tag.outputs.tag }}
+          files: dist/*.spoon.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
