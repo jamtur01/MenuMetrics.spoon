@@ -9,7 +9,7 @@ obj.__index = obj
 
 -- Metadata
 obj.name = "MenuMetrics"
-obj.version = "1.0"
+obj.version = "1.1"
 obj.author = "James Turnbull <james@lovedthanlost.net>"
 obj.homepage = "https://github.com/username/MenuMetrics.spoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
